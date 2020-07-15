@@ -56,19 +56,19 @@ SELECT (t1.id + 1) as gap_starts_at, (SELECT MIN(t3.id) -1 FROM reports_list t3 
 
 ##### where **workflow_states** data is as follows:
 ```
-+----+-------------+---------------------------------------------------------------------------------------------------+
-| id | state       | description                                                                                       |
-+----+-------------+---------------------------------------------------------------------------------------------------+
-|  1 | queued      | Task waiting to be executed. NA for workflow.                                                     |
-|  2 | scheduled   | Start of workflow scheduled for triggering on future date. NA for task.                           |
-|  3 | inprogress  | Workflow/task currently being executed                                                            |
-|  4 | failed      | Task (or one or more tasks in workflow) failed                                                    |
-|  5 | completed   | Task (or all tasks in workflow) successfully completed                                            |
-|  6 | paused      | Workflow deliberately paused at current task                                                      |
-|  7 | cancelled   | Task cancelled - workflow continues; or workflow cancelled - no tasks proceed                     |
-|  8 | expired     | Task TTL has exipired. Workflow will not proceed without user interaction                         |
-|  9 | waiting     | Interactive task has completed and is waiting for user ack. Workflow is also waiting for user ack |
-+----+-------------+---------------------------------------------------------------------------------------------------+
++----+-------------+
+| id | state       |
++----+-------------+
+|  1 | queued      |
+|  2 | scheduled   | 
+|  3 | inprogress  |
+|  4 | failed      |
+|  5 | completed   |
+|  6 | paused      |
+|  7 | cancelled   |
+|  8 | expired     |
+|  9 | waiting     |
++----+-------------+
 ```
 
 #### Get all tasks with cancelled task status for a specific workflow-request id
