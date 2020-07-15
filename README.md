@@ -1,4 +1,6 @@
 # Useful SQL Queries
+---
+
 ## Complex useful queries for common database admin tasks
 
 ### Get Duplicate values
@@ -14,10 +16,11 @@ SELECT (t1.id + 1) as gap_starts_at, (SELECT MIN(t3.id) -1 FROM reports_list t3 
 ```
 
 ---
+---
 
-#### Suppose we have the following 3 table schemas for managing workflows:
+### Suppose we have the following 3 table schemas for managing workflows:
   
-### workflow_requests
+#### workflow_requests
 ```
 +----------------------+--------------+------+-----+---------+----------------+
 | Field                | Type         | Null | Key | Default | Extra          |
@@ -27,7 +30,7 @@ SELECT (t1.id + 1) as gap_starts_at, (SELECT MIN(t3.id) -1 FROM reports_list t3 
 .... other fields
 ```
 
-### workflow_tasks_list  
+#### workflow_tasks_list  
  * joins to workflow_requests via FK_workflow_request_id
 ```
 +----------------------------+--------------+------+-----+---------+----------------+
@@ -38,7 +41,7 @@ SELECT (t1.id + 1) as gap_starts_at, (SELECT MIN(t3.id) -1 FROM reports_list t3 
 ... other fields
 ```
 
-### workflow_tasks_logs  
+#### workflow_tasks_logs  
  * joins to workflow_tasks_list via FK_workflow_tasks_list_id
  * joins to workflow_states via FK_workflow_state_id
 ```
@@ -51,7 +54,7 @@ SELECT (t1.id + 1) as gap_starts_at, (SELECT MIN(t3.id) -1 FROM reports_list t3 
 ... other fields
 ```
 
-#### where **workflow_states** data is as follows:
+##### where **workflow_states** data is as follows:
 ```
 +----+-------------+---------------------------------------------------------------------------------------------------+
 | id | state       | description                                                                                       |
