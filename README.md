@@ -77,17 +77,29 @@ SELECT (t1.id + 1) as gap_starts_at, (SELECT MIN(t3.id) -1 FROM reports_list t3 
 
 #### Get all tasks with cancelled task-status for a specific workflow-request id
 ```
-select * from workflow_tasks_log wtlog JOIN workflow_tasks_list wtls on (wtlog.FK_workflow_tasks_list_id = wtls.id) JOIN workflow_requests wr on (wtls.FK_workflow_request_id = wr.id) where wtlog.FK_workflow_state_id = 7 and wr.id = 14693;
+mysql> SELECT * from workflow_tasks_log wtlog 
+ JOIN workflow_tasks_list wtls on (wtlog.FK_workflow_tasks_list_id = wtls.id) 
+ JOIN workflow_requests wr on (wtls.FK_workflow_request_id = wr.id) 
+WHERE wtlog.FK_workflow_state_id = 7 and wr.id = 14693;
 ```
 
 #### Same as above, but just get the task-log id's
 ```
-select wtlog.id from workflow_tasks_log wtlog JOIN workflow_tasks_list wtls on (wtlog.FK_workflow_tasks_list_id = wtls.id) JOIN workflow_requests wr on (wtls.FK_workflow_request_id = wr.id) where wtlog.FK_workflow_state_id = 7 and wr.id = 14693;
+mysql> SELECT wtlog.id from workflow_tasks_log wtlog 
+ JOIN workflow_tasks_list wtls on (wtlog.FK_workflow_tasks_list_id = wtls.id) 
+ JOIN workflow_requests wr on (wtls.FK_workflow_request_id = wr.id)
+WHERE wtlog.FK_workflow_state_id = 7 and wr.id = 14693;
 ```
 
 #### Now try to update those same rows using the above query as a sub-query. You might expect this to work...
 ```
-mysql> update workflow_tasks_log set workflow_tasks_log.FK_workflow_state_id = 1 where workflow_tasks_log.id IN (select wtlog.id from workflow_tasks_log wtlog JOIN workflow_tasks_list wtls on (wtlog.FK_workflow_tasks_list_id = wtls.id) JOIN workflow_requests wr on (wtls.FK_workflow_request_id = wr.id) where wtlog.FK_workflow_state_id = 7 and wr.id = 14693);
+mysql> UPDATE workflow_tasks_log set workflow_tasks_log.FK_workflow_state_id = 1
+ WHERE workflow_tasks_log.id IN 
+  ( SELECT wtlog.id from workflow_tasks_log wtlog 
+    JOIN workflow_tasks_list wtls on (wtlog.FK_workflow_tasks_list_id = wtls.id) 
+    JOIN workflow_requests wr on (wtls.FK_workflow_request_id = wr.id)
+    WHERE wtlog.FK_workflow_state_id = 7 and wr.id = 14693
+ ) as sq;
 ERROR 1093 (HY000): You can't specify target table 'workflow_tasks_log' for update in FROM clause
 ```
 
@@ -95,7 +107,16 @@ ERROR 1093 (HY000): You can't specify target table 'workflow_tasks_log' for upda
 
 #### Solution: Wrap the sub-query in an additional sub-select
 ```
-mysql> update workflow_tasks_log set workflow_tasks_log.FK_workflow_state_id = 1 where workflow_tasks_log.id IN ( select id from (select wtlog.id from workflow_tasks_log wtlog JOIN workflow_tasks_list wtls on (wtlog.FK_workflow_tasks_list_id = wtls.id) JOIN workflow_requests wr on (wtls.FK_workflow_request_id = wr.id) where wtlo.FK_workflow_state_id = 7 and wr.id = 14693) as sq );
+mysql> UPDATE workflow_tasks_log set workflow_tasks_log.FK_workflow_state_id = 1 
+ WHERE workflow_tasks_log.id IN 
+ (
+   SELECT id from 
+    (select wtlog.id from workflow_tasks_log wtlog 
+     JOIN workflow_tasks_list wtls on (wtlog.FK_workflow_tasks_list_id = wtls.id) 
+     JOIN workflow_requests wr on (wtls.FK_workflow_request_id = wr.id) 
+     where wtlo.FK_workflow_state_id = 7 and wr.id = 14693
+    ) as sq
+ );
 Query OK, 5 rows affected (3.98 sec)
 Rows matched: 5  Changed: 5  Warnings: 0
 ```
