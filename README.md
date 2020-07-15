@@ -15,9 +15,9 @@ SELECT (t1.id + 1) as gap_starts_at, (SELECT MIN(t3.id) -1 FROM reports_list t3 
 
 ---
 
-# Suppose we have table schemas for managing workflows:
+#### Suppose we have the following 3 table schemas for managing workflows:
   
-## workflow_requests
+### workflow_requests
 ```
 +----------------------+--------------+------+-----+---------+----------------+
 | Field                | Type         | Null | Key | Default | Extra          |
@@ -27,7 +27,7 @@ SELECT (t1.id + 1) as gap_starts_at, (SELECT MIN(t3.id) -1 FROM reports_list t3 
 .... other fields
 ```
 
-## workflow_tasks_list  
+### workflow_tasks_list  
  * joins to workflow_requests via FK_workflow_request_id
 ```
 +----------------------------+--------------+------+-----+---------+----------------+
@@ -38,7 +38,7 @@ SELECT (t1.id + 1) as gap_starts_at, (SELECT MIN(t3.id) -1 FROM reports_list t3 
 ... other fields
 ```
 
-## workflow_tasks_logs  
+### workflow_tasks_logs  
  * joins to workflow_tasks_list via FK_workflow_tasks_list_id
  * joins to workflow_states via FK_workflow_state_id
 ```
@@ -84,9 +84,9 @@ mysql> update workflow_tasks_log set workflow_tasks_log.FK_workflow_state_id = 1
 ERROR 1093 (HY000): You can't specify target table 'workflow_tasks_log' for update in FROM clause
 ```
 
-### Why doesn't that work? In MySQL, you can't modify the same table which you use in the SELECT part.
+#### Why doesn't that work? In MySQL, you can't modify the same table which you use in the SELECT part.
 
-### Solution: Wrap the sub-query in an additional sub-select
+#### Solution: Wrap the sub-query in an additional sub-select
 ```
 mysql> update workflow_tasks_log set workflow_tasks_log.FK_workflow_state_id = 1 where workflow_tasks_log.id IN ( select id from (select wtlog.id from workflow_tasks_log wtlog JOIN workflow_tasks_list wtls on (wtlog.FK_workflow_tasks_list_id = wtls.id) JOIN workflow_requests wr on (wtls.FK_workflow_request_id = wr.id) where wtlo.FK_workflow_state_id = 7 and wr.id = 14693) as sq );
 Query OK, 5 rows affected (3.98 sec)
