@@ -18,7 +18,9 @@ SELECT (t1.id + 1) as gap_starts_at, (SELECT MIN(t3.id) -1 FROM reports_list t3 
 ---
 ---
 
-### Suppose we have the following 3 table schemas for managing workflows:
+### Double-joins & Updates with joins
+
+#### Suppose we have the following 3 table schemas for managing workflows:
   
 #### workflow_requests
 ```
