@@ -71,7 +71,9 @@ SELECT (t1.id + 1) as gap_starts_at, (SELECT MIN(t3.id) -1 FROM reports_list t3 
 +----+-------------+
 ```
 
-#### Get all tasks with cancelled task status for a specific workflow-request id
+### Use double joins to map across all three tables
+
+#### Get all tasks with cancelled task-status for a specific workflow-request id
 ```
 select * from workflow_tasks_log wtlog JOIN workflow_tasks_list wtls on (wtlog.FK_workflow_tasks_list_id = wtls.id) JOIN workflow_requests wr on (wtls.FK_workflow_request_id = wr.id) where wtlog.FK_workflow_state_id = 7 and wr.id = 14693;
 ```
